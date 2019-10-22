@@ -1,0 +1,18 @@
+{% extends "base_tpv.html" %}
+{% load static %}
+
+{% block contenido %} 
+	<h2>Marca</h2>
+    <form method="POST" class="post-form">
+    	{% csrf_token %}
+        {{ form.as_p }}
+        <a href="{% url 'marca_consultar' %}">Cancelar</a>
+        <button type="submit" class="save btn btn-default">Guardar</button>
+    </form>
+ 
+{% endblock %}
+
+
+{% block titulo %}
+Clientes
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base_tpv.html" %}
+{% load static %}
+
+{% block contenido %} 
+	
+	<a href="{% url 'prov_nuevo' %}">Regresar</a>
+
+	<table class="table table-hover table-striped table-bordered">
+		<th>Proveedores</th>
+		<th>clave</th>
+		<th>Estado</th>
+		<th>Telefono Fijo</th>
+		<th>Accion</th>
+
+		
+	{% for i in prov %}
+		<tr>
+			<td>{{i.nombre}}</td>
+			<td>{{i.clave}}</td>
+			<td>{{i.ubicacion.estado}}</td>
+			<td>{{i.contacto.telefono}}</td>
+			<td><a href="{% url 'prov_editar' pk=i.id %}">Editar</td>
+			<td><a href="{% url 'prov_eliminar' pk=i.id %}">Eliminar</td>
+		</tr>
+	{%endfor %}
+    </table>
+ 
+{% endblock %}
+
+
+{% block titulo %}
+Clientes
+{% endblock %}

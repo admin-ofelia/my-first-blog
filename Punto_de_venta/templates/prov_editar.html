@@ -1,0 +1,22 @@
+{% extends "base_tpv.html" %}
+{% load static %}
+
+{% block contenido %} 
+	<h2>Provedores</h2>
+    <form method="POST" class="post-form">
+    	{% csrf_token %}
+        {{ prov.as_p }}
+        {{ ubi.as_p }}
+        {{ conta.as_p }}
+
+        <a href="{% url 'prov_consultar' %}">Cancelar</a>
+        <button type="submit" class="save btn btn-default">Guardar</button>
+    </form>
+	
+ 
+{% endblock %}
+
+
+{% block titulo %}
+Clientes
+{% endblock %}

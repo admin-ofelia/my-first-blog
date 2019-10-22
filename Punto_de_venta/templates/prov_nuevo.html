@@ -1,0 +1,19 @@
+{% extends "base_tpv.html" %}
+{% load static %}
+
+{% block contenido %} 
+	<a href="{% url 'prov_consultar' %}">Consultar provedores</a>
+	<h2>Provedores</h2> 
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ prov.as_p }}
+        {{ ubi.as_p }}
+        {{ cont.as_p }}
+        <button type="submit" class="save btn btn-default">Guardar</button>
+    </form>  
+ 
+{% endblock %}
+
+
+{% block titulo %}
+Clientes
+{% endblock %}

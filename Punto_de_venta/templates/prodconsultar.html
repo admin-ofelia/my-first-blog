@@ -1,0 +1,25 @@
+{% extends "base_tpv.html" %}
+{% load static %}
+
+{% block contenido %} 
+    <a href="{% url 'ptoventa_producto_nuevo' %}">Nuevo Producto</a>
+    <h2>Productos</h2> 
+   	<table class="table table-hover table-striped table-bordered">
+   	  <th>Nombre</th>
+      <th>Acciones</th>
+        {% for i in form %}
+    	   <tr>
+			   <td>{{i.nombre}}</td>
+         <td><a href="{% url 'prod_editar' pk=i.id %}">Editar</td>
+         <td><a href="{% url 'prod_eliminar' pk=i.id %}">Eliminar</td>
+
+		</tr>
+	{%endfor %}
+    </table>
+    {{form.nombre}}
+{% endblock %}
+
+
+{% block titulo %}
+Productos
+{% endblock %}

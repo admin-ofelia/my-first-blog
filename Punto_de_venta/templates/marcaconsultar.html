@@ -1,0 +1,25 @@
+{% extends "base_tpv.html" %}
+{% load static %}
+
+{% block contenido %}
+	<a href="{% url 'ptoventa_marca_nuevo' %}">Nueva Marca</a>
+	<table class="table table-hover table-striped table-bordered">
+		<th>Marcas</th>
+		<th>Accion</th>
+	
+
+	{% for i in marcas %}
+		<tr>
+			<td>{{i.nombre}}</td>
+			<td><a href="{% url 'marca_editar' pk=i.id %}">Editar</td>
+			<td><a href="{% url 'marca_eliminar' pk=i.id %}">Eliminar</td>
+
+		</tr>
+	{%endfor %}
+    </table>
+{% endblock %}
+
+
+{% block titulo %}
+Clientes
+{% endblock %}

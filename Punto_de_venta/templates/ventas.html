@@ -1,0 +1,221 @@
+{% extends "base_tpv.html" %}
+
+{% load static %}
+
+{% block js_footer %}
+<script type="text/javascript">
+	
+$(function(){
+
+	$("#boton_cliente").click(function(){
+		alert(1)
+	})
+
+	
+	$("#busca_cliente").autocomplete({
+		source: "contacto",
+		minLength: 2,
+		select: function(event, ui){
+			$("#cliente_id").text(ui.item.pk);
+			$("#cliente_nombre").text(ui.item.nombre);
+			$("#cliente_RFC").text(ui.item.RFC);
+			$("#cliente_ubi").text(ui.item.ubicacion__estado);
+			$("#cliente_contacto").text(ui.item.contacto__telefono);
+			
+		return false;
+		}
+	}).autocomplete('instance')._renderItem=function(ul,item){
+		return $("<a class = 'list-group-item list-group-item-action'></a>")
+		.append("<div class=''>" + item.nombre + " - " + item.RFC + "</div>" )
+		.appendTo(ul);
+
+	}
+
+	$("#agregar_descripcion").autocomplete({
+		source: "producto",
+		minLength: 2,
+		select: function(event, ui){
+			console.log(ui.item);
+			$("#agregar_codigo_de_barras").text(ui.item.codigo_barras);
+			$("#agregar_descripcion").text(ui.item.nombre);
+			$("#agregar_existencia").text(ui.item.existencia);
+			$("#agregar_precio").text(ui.item.precio);
+
+		return false;
+		}
+	}).autocomplete('instance')._renderItem=function(ul,item){
+		return $("<a class = 'list-group-item list-group-item-action'></a>")
+		.append("<div class=''>" + item.nombre + "</div>" )
+		.appendTo(ul);
+	}
+
+
+	$("#boton_agregar_producto").click(function(){
+
+
+
+	})
+
+
+});
+
+</script>
+    {%endblock %}
+
+
+{% block contenido %}
+
+<h2>Ventas</h2>
+<div>
+  <form>
+  	<div class="form-group row">
+  		<label class="col-md-1 col-form-label">Cliente</label>
+	    <div class="col-md-5">
+	      <input type="text" name="" class="form-control" placeholder="Nombre del Cliente" id="busca_cliente">
+	    </div>
+	    <div class="form-group col-md-1">
+	    	<button id="boton_cliente" class="btn btn-danger btn-sm" type="button">
+	    		<span class="glyphicon glyphicon-minus"></span>
+	    	</button> 
+	    </div>
+    </div>
+  </form>
+</div>
+
+<div>
+  <table class="table table-hover">
+    <th>#</th>
+    <th>Nombre</th>
+    <th>RFC</th>
+    <th>Direccion</th>
+    <th>Telefono</th>
+
+    <tr>
+      <td id="cliente_id"></td>
+      <td id="cliente_nombre"></td>
+      <td id="cliente_RFC"></td>
+      <td id="cliente_ubi"></td>
+      <td id="cliente_contacto"></td>
+
+    </tr>
+    
+  </table>
+</div>
+<div>
+  <form>
+  	<div class="form-row">
+	    <div class="form-group col-md-2">
+	     	<label for="input">Codigo de barras</label>
+	      	<input type="text" name="" id="agregar_codigo_de_barras" class="form-control" placeholder="">
+	    </div>
+	    <div class="form-group col-md-2">
+	    	<label for="input">Descripcion</label>
+	      	<input type="text" name="" id="agregar_descripcion" class="form-control" placeholder="">
+	    </div>
+	    <div class="form-group col-md-1">
+	    	<label for="input">Existencia</label>
+	      	<input type="text" name="" id="agregar_existencia" class="form-control" placeholder="">
+	    </div>
+	    <div class="form-group col-md-1">
+	    	<label for="input">Precio</label>
+	      	<input type="text" name="" id="agregar_precio" class="form-control" placeholder="">
+	    </div>
+	    <div class="form-group col-md-1">
+	    	<label for="input">Cantidad</label>
+	      	<input type="text" name="" class="form-control" placeholder="">
+	    </div>
+	    <div class="form-group col-md-1">
+	    	<label for="input">Descuento</label>
+	      	<input type="text" name="" class="form-control" placeholder="">
+	    </div>
+	    <div class="form-group col-md-1">
+	    	<label for="input">Importe</label>
+	      	<input type="text" name="" class="form-control" placeholder="">
+	    </div>
+	    <div class="form-group col-md-3">
+	    	<button id="boton_eliminar_producto" class="btn btn-danger btn-sm" type="button">
+	    		<span class="glyphicon glyphicon-minus"></span>
+	    	</button> 
+	    	<button id="boton_agregar_producto" class="btn btn-success btn-sm">
+	    		<span class="glyphicon glyphicon-plus"></span>
+	    	</button>
+	    	<!--<a href="#" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-minus"></span></a>
+			<a href="#" id="boton_agregar_producto"  class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus"></span></a>-->
+		</div>	
+	</div>
+		
+  </form>
+</div>
+<div class="container">
+	<div class="col-md-9">
+	 	<table class="table table-hover">
+		  	<thead>
+		  		<tr>
+				    <th>#</th>
+				    <th>Cod. Barras</th>
+				    <th>Nombre</th>
+				    <th>Precio</th>
+				    <th>Cantidad</th>
+				    <th>Descuento</th>
+				    <th>IVA</th>
+				    <th>Importe</th>
+			    </tr>
+		    </thead>
+		    <tbody>
+			    <tr>
+			      <td>12</td>
+			      <td>643569008655</td>
+			      <td>Agua epura</td>
+			      <td>12</td>
+			      <td>1</td>
+			      <td>0</td>
+			      <td>0</td>
+			      <td>0</td>
+			      <td>
+			      	<div class="col-md-1">
+						<a href="#" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-minus"></span></a>
+					</div>
+				  </td>
+			    </tr>
+		  	</tbody>  
+	  	</table>
+	</div>
+	
+	<div class="col-md-3">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Total</th>
+				</tr>
+			</thead>
+			<tbody>		
+				
+				<tr>
+					<th>SUBTOTAL</th>
+						<td>0.00</td>
+				</tr>
+				<tr>
+					<th>IVA</th>
+						<td>0.00</td>
+				</tr>
+				<tr>
+					<th>DESCUENTO</th>
+						<td>0.00</td>
+				</tr>
+				<tr>
+					<th>TOTAL</th>
+						<td>0.00</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<!--<div class="col-md-1">
+		<a href="#" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-minus"></span></a>
+	</div>-->
+</div>
+{% endblock %}
+
+{% block titulo %}
+Cajas
+{% endblock %}
+

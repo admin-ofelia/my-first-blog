@@ -1,0 +1,24 @@
+{% extends "base_tpv.html" %}
+{% block contenido %} 
+	
+	<a href="{% url 'med_nuevo' %}">Nueva medida</a>
+	<table class="table table-hover table-striped table-bordered">
+		<th>Unidad de medida</th>
+		<th>Accion</th>
+
+	{% for i in med %}
+		<tr>
+			<td>{{i.tipo_medida}}</td>
+			<td><a href="{% url 'med_editar' pk=i.id %}">Editar</td>
+			<td><a href="{% url 'med_eliminar' pk=i.id %}">Eliminar</td>
+
+		</tr>
+	{%endfor %}
+    </table>
+ 
+{% endblock %}
+
+
+{% block titulo %}
+Clientes
+{% endblock %}
