@@ -31,5 +31,8 @@ urlpatterns = [
 	url(r'^ventas/$', views.ventas_lista, name='ventas_lista'),
 	url(r'^ventas/contacto/$', views.ventas_contacto, name='ventas_contacto'),
 	url(r'^ventas/producto/$', views.ventas_producto, name='ventas_producto'),
+	url(r'^ventas/nueva/$', views.venta_nueva, name='ventas_nueva'),
+	url(r'^caja/$', views.caja, name='lista_caja'),
+	url(r'^reporte/venta/$', views.reporte_venta, name='reporte_venta'),	
 
 ]

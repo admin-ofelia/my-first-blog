@@ -1,9 +1,10 @@
-# -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 from django.db import models
 
 from django.utils import timezone
+
 
 # Create your models here.
 
@@ -35,8 +36,7 @@ class Provedores(models.Model):
 
 class Caja(models.Model):
 	nombre = models.CharField(max_length=30)
-	empleado = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-
+	
 	def __str__(self):
     	    return self.nombre
 
@@ -63,7 +63,7 @@ class Productos(models.Model):
 	nombre = models.CharField(max_length=50)
 	codigo_barras = models.CharField(max_length=30)
 	precio = models.IntegerField() 
-	iva = models.CharField(max_length=5)
+	iva = models.IntegerField()
 	existencia = models.IntegerField()
 	marca = models.ForeignKey(Marca, on_delete=models.CASCADE)
 	dep = models.ForeignKey(Departamento, on_delete=models.CASCADE)
@@ -90,19 +90,20 @@ class Ventas(models.Model):
 	)
 	forma_de_pago = models.CharField(max_length=2, choices=FORMA_PAGO, default='01')
 	monto_pagado = models.DecimalField(max_digits=10, decimal_places=2)
-	caja = models.ManyToManyField(Caja)
+	caja = models.ForeignKey(Caja)
 	total = models.DecimalField(max_digits=10, decimal_places=2)
 	fecha = models.DateTimeField(default=timezone.now)
 	subtotal = models.DecimalField(max_digits=10, decimal_places=2)
 	iva = models.DecimalField(max_digits=10, decimal_places=2)
-	cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
+	cliente  = models.ForeignKey(Clientes)
 	cambio = models.DecimalField(max_digits=10, decimal_places=2)
+	empleado = models.ForeignKey('auth.User')
 
 	def __str__(self):
     	    return self.cliente
 
 class DetalleVenta(models.Model):
-	productos = models.ForeignKey(Productos, on_delete=models.CASCADE)
+	productos = models.ForeignKey(Productos)
 	cantidad = models.DecimalField(max_digits=10, decimal_places=2)
 	precio = models.DecimalField(max_digits=10, decimal_places=2)
 	iva = models.DecimalField(max_digits=10, decimal_places=2)

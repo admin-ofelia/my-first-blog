@@ -32,10 +32,11 @@
 			        <li><a href="{% url 'marca_consultar' %}">Marcas</a></li>
 			        <li><a href="{% url 'dep_consultar' %}">Departamentos</a></li>
 			        <li><a href="{% url 'med_consultar' %}">Medida</a></li>
+			        <li><a href="{% url 'reporte_venta' %}">Reporte Venta</a></li>
 			        <li class="dropdown">
 			          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Participantes<span class="caret"></span></a>
 			          <ul class="dropdown-menu">
-			            <li><a href="#">Cajas</a></li>
+			            <li><a href="{% url 'lista_caja' %}">Cajas</a></li>
 			            <li><a href="{% url 'prov_nuevo' %}">Provedores</a></li>
 			            <li><a href="{% url 'cliente_consultar' %}">Clientes</a></li>
 			            <!--<li role="separator" class="divider"></li>

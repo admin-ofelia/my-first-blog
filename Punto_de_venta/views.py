@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import simplejson
 from django.shortcuts import render
 
 from django.utils import timezone
 
 from django.http import HttpResponse
 import json
+from django.template.loader import render_to_string
+from django.template import RequestContext		
 from Punto_de_venta.models import Ubicacion, Contacto, Provedores, Caja, UnidadMedida, Departamento, Marca, Productos, Clientes, Ventas, DetalleVenta, CajaOperacion
 from django.shortcuts import render, get_object_or_404
-from .forms import ProductoNuevo, MarcaNueva, DepNuevo, MedNuevo, ProvedorNuevo, UbicacionNueva, ContactoNuevo, ClienteNuevo
+from .forms import ProductoNuevo, MarcaNueva, DepNuevo, MedNuevo, ProvedorNuevo, UbicacionNueva, ContactoNuevo, ClienteNuevo, VentaNueva, CajaNueva
 
 from django.shortcuts import redirect
 # Create your views here.
@@ -90,7 +93,6 @@ def marca_nueva(request):
 
 def marca_editar(request, pk):
 	objeto = get_object_or_404(Marca, pk=pk)
-	#return render(request, 'ptoventa_marcaedit.html')
 
 	if request.method == "POST":
 		form = MarcaNueva(request.POST, instance=objeto)
@@ -268,7 +270,6 @@ def cliente_nuevo(request):
 		return render(request, 'cliente_nuevo.html', {'cliente': formu, 'ubic': ubi, 'contac': contact})
 
 def cliente_editar(request, pk):
-	print "estoy Aqui"
 	objeto = get_object_or_404(Clientes, pk=pk)
 
 	if request.method == "POST":
@@ -309,10 +310,94 @@ def ventas_contacto(request):
 	return HttpResponse(data,mimetype)
 
 def ventas_producto(request):
-	produc = request.GET.get('term')
-	print produc;	
-	objeto = Productos.objects.filter(nombre__icontains=produc).values('nombre','codigo_barras','existencia','precio')
-	print objeto
+	produc = request.GET.get('term')	
+	objeto = Productos.objects.filter(nombre__icontains=produc).values('pk','nombre','codigo_barras','existencia','precio','iva')
 	data = json.dumps(list(objeto))
 	mimetype = 'applications/json'
 	return HttpResponse(data,mimetype)
+
+def venta_nueva(request):
+
+	respuesta = {'exito':False}
+	#print request.POST['articulos']
+	#print type( request.POST['articulos'] )
+	#print type(articulos)
+	#articulos = simplejson.loads(request.POST['articulos'])
+
+	fecha = timezone.now()
+
+	if request.method == "POST":
+
+		monto_pagado = request.POST['monto_pagado']
+		subtotal = request.POST['subtotal']
+		iva = request.POST['iva']
+		total = request.POST['total'] 
+		metodo_pago = request.POST['metodo_pago']
+		cambio = request.POST['total_cambio']
+		cliente_id = request.POST['cliente_id']
+		forma_pago = request.POST['metodo_pago']
+
+		articulos = simplejson.loads(request.POST['articulos'])
+
+		venta = Ventas(
+			caja_id = 1,
+			forma_de_pago=metodo_pago,
+			monto_pagado=monto_pagado, 
+			total   = total, 
+			fecha   = fecha, 
+			subtotal=subtotal, 
+			iva     =iva, 
+			cambio  =cambio,
+			cliente_id = cliente_id,
+			empleado_id =1
+			)
+
+		venta.save()
+		for elemento in articulos:
+
+			detalle_venta = DetalleVenta(
+				productos_id = elemento['id'],
+				cantidad = elemento['cantidad'],
+				precio = elemento['precio'],
+				iva = elemento['iva'],
+				descuento = elemento['descuento'],
+				ventas = venta
+
+			)
+			detalle_venta.save()
+		respuesta['exito']=True
+
+	return HttpResponse(simplejson.dumps(respuesta), content_type='application/json')
+
+def caja(request):
+	objeto = Caja.objects.all()
+	return render(request, 'caja.html', {'objeto': objeto})	
+
+def reporte_venta(request):
+	
+	if request.method == 'POST':
+
+		fecha_inicio = request.POST['fecha_inicio']
+		fecha_fin = request.POST['fecha_fin']
+		cliente_id = request.POST['cliente']
+
+		filtros = {
+			
+
+		}
+		if fecha_inicio:
+			filtros['fecha__gte']=fecha_inicio
+		if fecha_fin:
+			filtros.setdefault('fecha__lte',fecha_fin)
+		if cliente_id:
+			filtros['cliente_id']=cliente_id
+
+		print filtros
+
+		consulta = Ventas.objects.filter(**filtros)
+
+		salida = render_to_string('contenido_reporte.html', {'objeto': consulta})
+		return HttpResponse(salida)
+
+	consulta = Ventas.objects.all()
+	return render(request, 'reporte.html', {'objeto': consulta},)

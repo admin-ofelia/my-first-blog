@@ -1,0 +1,16 @@
+{% extends "base_tpv.html" %}
+
+{% load static %}
+
+{% block contenido %}
+	
+	{% for i in objeto %}
+		{{i.nombre}}
+	{%endfor %}
+
+{% endblock%}
+
+
+{% block titulo %}
+Cajas
+{% endblock %}

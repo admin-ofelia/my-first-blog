@@ -1,0 +1,78 @@
+{% extends "base_tpv.html" %}
+{% load static %}
+
+{% block js_footer %}
+<script type="text/javascript">
+
+$(function(){
+	$("#buscar_venta").click(function(){
+		fecha = {
+			fecha_inicio: $("#fecha_ini_venta").val(),
+			fecha_fin: $("#fecha_fin_venta").val(),
+			cliente: $("#cliente_venta").val(),
+			csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+		}
+		$.ajax({
+			url: "/reporte/venta/",
+			data: fecha,
+			method: "POST",
+			dataType: "html",
+			success: function(data){
+
+				$("#contenido_reporte").html(data);
+		
+			},
+			error: function(error){
+				alert("No funciona bien"); 
+			}
+		})
+	})
+});
+</script>
+{% endblock %}
+
+{% block contenido %}
+{% csrf_token %}
+
+	<h2>Reporte de Ventas</h2>
+	<form>
+		  <div class="form-group row">
+		    <label for="" class="col-sm-1 col-form-label col-form-label-sm">Fecha</label>
+		    <div class="col-sm-2">
+		      <input type="text" class="form-control form-control-sm" id="fecha_ini_venta" placeholder="">
+		    </div>
+		    <div class="col-sm-2">
+		      <input type="text" class="form-control form-control-sm" id="fecha_fin_venta" placeholder="">
+		    </div>
+		    <label for="colFormLabelSm" class="col-sm-1 col-form-label col-form-label-sm">cliente</label>
+		    <div class="col-sm-2">
+		      <input type="text" class="form-control form-control-sm" id="cliente_venta" placeholder="">
+		    </div>
+		    <button id="buscar_venta" class="btn btn-default" type="button">BUSCAR</button>
+		  </div>
+	</form>
+
+	<table class="table table-hover table-striped table-bordered">
+		<th>Id</th>
+		<th>Forma de pago</th>
+		<th>Monto pagado</th>
+		<th>Total</th>
+		<th>Fecha</th>
+		<th>Subtotal</th>
+		<th>Iva</th>
+		<th>Cambio</th>
+		<th>Cliente</th>
+		<th>Caja</th>
+		<th>Empleado</th>
+		<tbody id="contenido_reporte">
+		{% include 'contenido_reporte.html' %}
+			
+		</tbody>
+		
+	
+	</table>
+{% endblock %}
+
+{% block titulo %}
+Ventas
+{% endblock %}

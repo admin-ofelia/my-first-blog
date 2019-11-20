@@ -30,7 +30,6 @@ class UbicacionNueva(forms. ModelForm):
 		#fields = ()
 		exclude = ()
 		
-
 class ContactoNuevo(forms. ModelForm):	
 	class Meta:
 		model = Contacto
@@ -46,3 +45,13 @@ class ClienteNuevo(forms. ModelForm):
 	class Meta:
 		model = Clientes
 		exclude = ('ubicacion','contacto',)
+
+class VentaNueva(forms. ModelForm):
+	class Meta:
+		model = Ventas
+		exclude = ('forma_de_pago', 'monto_pagado', 'caja', 'cliente', 'cambio',)
+
+class CajaNueva(forms. ModelForm):
+	class Meta:
+		models = Caja
+		fields = ('nombre',)

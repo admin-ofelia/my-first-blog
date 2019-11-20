@@ -4,16 +4,224 @@
 
 {% block js_footer %}
 <script type="text/javascript">
-	
-$(function(){
 
-	$("#boton_cliente").click(function(){
-		alert(1)
+function eliminaclaseerror(){
+	$("#agregar_codigo_de_barras").parent().removeClass("has-error");
+	$("#agregar_descripcion").parent().removeClass("has-error");
+	$("#agregar_existencia").parent().removeClass("has-error");
+	$("#agregar_precio").parent().removeClass("has-error");
+	$("#agregar_cantidad").parent().removeClass("has-error");
+	$("#agregar_descuento").parent().removeClass("has-error");
+	$("#agregar_iva").parent().removeClass("has-error");
+	$("#agregar_importe").parent().removeClass("has-error");
+}
+
+function validaproducto(){
+	if($("#agregar_codigo_de_barras").val() == ""){
+		$("#agregar_codigo_de_barras").parent().addClass("has-error");
+		$("#mensaje_error").text("No se ha agregado un codigo de barras").show();
+		//$("#agregar_codigo_de_barras").parent().html("Debe ingresar un codigo de barras");	
+	}	
+	if($("#agregar_descripcion").val() == ""){
+		$("#agregar_descripcion").parent().addClass("has-error");
+		$("#mensaje_error").text("No se ha agregado el nombre del producto").show();
+		return false;
+	}
+	if($("#agregar_existencia").val() <= 0){
+		$("#agregar_existencia").parent().addClass("has-error");
+		$("#mensaje_error").text("error").show();
+	} 
+	if($("#agregar_precio").val() < 0){
+		$("#agregar_precio").parent().addClass("has-error");
+		$("#mensaje_error").text("No se ha agregado un precio mayor que cero").show();
+	}
+	if($("#agregar_cantidad").val() <= 0){
+		$("#agregar_cantidad").parent().addClass("has-error");	
+		$("#mensaje_error").text("Debe agregar una cantidad mayor que 1").show();	
+	}
+	if($("#agregar_descuento").val() < 0){
+		$("#agregar_descuento").parent().addClass("has-error");
+		$("#mensaje_error").text("No puede agregar descuentos negativos").show();
+	}
+	if($("#agregar_iva").val() < 0){
+		$("#agregar_iva").parent().addClass("has-error");
+		$("#mensaje_error").text("error").show();
+	}
+	if($("#agregar_importe").val() <= 0){
+		//alert("Agregar un importe para la venta");
+		$("#agregar_importe").parent().addClass("has-error");
+		$("#mensaje_error").text("Debe tener un importe mayor que cero").show();
+	}
+}
+
+function borrar_datos_productos(){
+	$("#agregar_pk").val(''); 
+	$("#agregar_codigo_de_barras").val('');
+	$("#agregar_descripcion").val('');	
+	$("#agregar_existencia").val(0); 
+	$("#agregar_precio").val(0); 
+	$("#agregar_cantidad").val(1); 
+	$("#agregar_descuento").val(0);
+	$("#agregar_iva").val(0); 
+	$("#agregar_importe").val(0); 
+
+	$("#totales_productos").text(0);
+	$("#totales_subtotal").text(0);
+	$("#totales_iva").text(0);
+	$("#totales_descuento").text(0);
+	$("#totales_total").text(0);
+}
+
+function borrar_datos_cliente(){
+	$("#cliente_id").text('');
+	$("#cliente_nombre").text('');
+	$("#cliente_RFC").text('');
+	$("#cliente_ubi").text('');
+	$("#cliente_contacto").text('');
+}
+
+function busca_cliente(){
+	dato = $("#datos_cliente").find('td');
+		id = $(dato[0]).text();
+	//console.log(id);
+	return id;
+}
+
+function lista_productos(){
+
+	lista = [];
+
+	filas = $("#tabla_body").find("tr")
+	$.each(filas, function(i, fila ){
+		columnas = $(fila).find('td');
+
+		dato = {
+			id : $(columnas[0]).text(),
+		 	codigo : $(columnas[1]).text(),
+		 	nombre : $(columnas[2]).text(), 
+		 	precio : $(columnas[3]).text(), 
+		 	cantidad : $(columnas[4]).text(), 
+		 	descuento : $(columnas[5]).text(), 
+		 	iva : $(columnas[6]).text(), 
+		 	importe : $(columnas[7]).text()
+		};
+	lista.push(dato);
+	})
+	
+	return lista;
+}
+
+function calculatotales(){
+	importes = $(".tdimporte");
+	tiva = $(".tdiva");
+	tdescuento = $(".tddescuento");
+	importetotal=0;
+	ivatotal=0;
+	descuentototal=0;
+	total_total=0;
+
+	$.each( importes, function(i, elemento){
+		importetotal = importetotal + parseFloat( $(elemento).text() )
+		total_productos = i;
+	})
+	$.each( tiva, function(i, elemento){
+		ivatotal = ivatotal + parseFloat( $(elemento).text() )
+	})
+	$.each( tdescuento, function(i, elemento){
+		descuentototal = descuentototal + parseFloat( $(elemento).text() )
 	})
 
+	total_total = importetotal + ivatotal + descuentototal;
+
+	$("#totales_subtotal").text(importetotal);
+	$("#totales_iva").text(ivatotal);
+	$("#totales_descuento").text(descuentototal);
+	$("#totales_total").text(total_total);
+	numero_productos = total_productos + 1;
+	$("#totales_productos").text(numero_productos);
+}
+
+function calculaimporte(){
+	cantidad = $("#agregar_cantidad").val();
+	descuento = $("#agregar_descuento").val();
+	precio = $("#agregar_precio").val();
+
+	importe = (parseFloat(cantidad) * parseFloat(precio) ) ;
+	subtotal = importe - (importe * parseFloat(descuento)/100);
+			
+	$("#agregar_importe").val(subtotal);
+	eliminaclaseerror();
+}
+
+function agregarproducto(){
+	id = $("#agregar_pk").val(); 
+	codigobarras = $("#agregar_codigo_de_barras").val();
+	nombre = $("#agregar_descripcion").val();	
+	costo = $("#agregar_precio").val(); 
+	cantidad = $("#agregar_cantidad").val(); 
+	descuento = $("#agregar_descuento").val();
+	iva = $("#agregar_iva").val(); 
+	importe = $("#agregar_importe").val(); 
+
+	total = (parseFloat(cantidad) * parseFloat(costo));
+	subtotales = total - (total * parseFloat(descuento)/100);
+	total_descuento = total - subtotales;
+
+	total_iva = (parseFloat(costo) * parseFloat(iva)/100 * cantidad);
+
+	subtotal_iva = (1 + parseFloat(iva)/100)
+
+	subtotal_importe = parseFloat(cantidad) * parseFloat(costo) * subtotal_iva;
+	total_importe = subtotal_importe - total_descuento;
+ 
+	fila='<tr>'+
+		'<td id="id_producto">' + id + '</td>'+
+		'<td id="codigo_barras_producto">' + codigobarras + '</td>'+
+		'<td id="nombre_producto">' + nombre + '</td>'+
+		'<td id="costo_producto">' + costo + '</td>'+
+		'<td id="cantidad_producto">' + cantidad + '</td>'+
+		'<td id="descuento_producto" class="tddescuento">' + total_descuento + '</td>'+
+		'<td id="iva_producto" class="tdiva">' + total_iva + '</td>'+
+		'<td id="importe_producto" class="tdimporte">' + total_importe + '</td>'+
+		
+		'<td>'+
+			'<div class="col-md-1">'+
+				'<button id="boton_producto" class="btn btn-danger btn-sm" type="button">'+
+				    '<span class="glyphicon glyphicon-minus"></span>'+
+				'</button> '+
+			'</div>'+
+		'</td>'+
+		'</tr>'
+
+	$('#tabla_body').append(fila);
+
+	$("#agregar_pk").val(''); 
+	$("#agregar_codigo_de_barras").val('');
+	$("#agregar_descripcion").val('');	
+	$("#agregar_existencia").val(0); 
+	$("#agregar_precio").val(0); 
+	$("#agregar_cantidad").val(1); 
+	$("#agregar_descuento").val(0);
+	$("#agregar_iva").val(0); 
+	$("#agregar_importe").val(0); 
+
+	calculatotales();
+
+}
+
+$(function(){
+	$("#boton_cliente").click(function(){
+		borrar_datos_cliente();
+	})
+
+	$("#agregar_cantidad, #agregar_descuento, #agregar_precio").blur( function(){
+
+		calculaimporte();
+
+	} )
 	
 	$("#busca_cliente").autocomplete({
-		source: "contacto",
+		source: "/ventas/contacto/",
 		minLength: 2,
 		select: function(event, ui){
 			$("#cliente_id").text(ui.item.pk);
@@ -21,7 +229,8 @@ $(function(){
 			$("#cliente_RFC").text(ui.item.RFC);
 			$("#cliente_ubi").text(ui.item.ubicacion__estado);
 			$("#cliente_contacto").text(ui.item.contacto__telefono);
-			
+
+			$("#busca_cliente").val('');		
 		return false;
 		}
 	}).autocomplete('instance')._renderItem=function(ul,item){
@@ -31,15 +240,24 @@ $(function(){
 
 	}
 
+	$("#boton_eliminar_producto").click(function(){
+		borrar_datos_productos();
+		eliminaclaseerror();
+	})
+
 	$("#agregar_descripcion").autocomplete({
-		source: "producto",
+		source: "/ventas/producto/",
 		minLength: 2,
 		select: function(event, ui){
-			console.log(ui.item);
-			$("#agregar_codigo_de_barras").text(ui.item.codigo_barras);
-			$("#agregar_descripcion").text(ui.item.nombre);
-			$("#agregar_existencia").text(ui.item.existencia);
-			$("#agregar_precio").text(ui.item.precio);
+			campos = ui.item;
+			$("#agregar_codigo_de_barras").val(campos.codigo_barras);
+			$("#agregar_descripcion").val(campos.nombre);
+			$("#agregar_existencia").val(campos.existencia);
+			$("#agregar_precio").val(campos.precio);
+			$("#agregar_pk").val(campos.pk);
+			$("#agregar_iva").val(campos.iva)
+
+			calculaimporte();
 
 		return false;
 		}
@@ -49,48 +267,142 @@ $(function(){
 		.appendTo(ul);
 	}
 
-
-	$("#boton_agregar_producto").click(function(){
-
-
-
+	$(document).on('click', '#boton_producto', function(event) {
+		event.preventDefault();
+		$(this).closest('tr').remove();
+		calculatotales();
 	})
 
+	$("#boton_agregar_producto").click(function(){
+		if($("#agregar_pk").val() != ""){		
+			if($("#agregar_codigo_de_barras").val() != "" && $("#agregar_descripcion").val() != "" && $("#agregar_cantidad").val() > 0 && $("#agregar_precio").val() > 0){
+				agregarproducto();	
+			}else{
+				validaproducto();
+			}	
+		}else{
+			validaproducto();
+			
+		}
+	})
 
+	$("#guargar_venta").click(function(){
+
+		subtotal_pagar = $("#totales_subtotal").text();
+		cliente = busca_cliente();
+		if(subtotal_pagar <= 0 ){
+			$("#mensaje_error").text("No se han agregado productos").show();
+			
+		return false;	
+		}else if(cliente == ''){
+			$("#mensaje_error").text("No se han agregado un cliente").show();	
+		return false;	
+		}else{
+			$("#mensaje_error").text("Datos correctos").show();
+			if(subtotal_pagar > 0 && cliente != ''){
+			iva_pagar = $("#totales_iva").text();
+			total_pagar = $("#totales_total").text();
+			$("#subtotal_venta").val(subtotal_pagar);
+			$("#iva_venta").val(iva_pagar);
+			$("#total_venta").val(total_pagar);
+		}
+		
+		}
+		
+	});
+
+	$("#monto_pagar_venta").blur( function(){
+
+		monto_pagado = $("#monto_pagar_venta").val();
+		cambio = monto_pagado - total_pagar 
+		$("#cambio_venta").val(cambio);
+	})
+
+	$("#pagar_realizar_pago").click(function(){
+		productos = lista_productos();
+
+		monto_pagado = $("#monto_pagar_venta").val();
+		//console.log(monto_pagado);
+		if(monto_pagado > 0){
+
+			cambio = monto_pagado - total_pagar;
+
+			venta = {
+				cliente_id: $("#cliente_id").text(),
+				subtotal: subtotal_pagar,
+				iva: iva_pagar,
+				total: total_pagar,
+				metodo_pago: $("#metodo_pago_venta").val(),
+				monto_pagado: monto_pagado,
+				total_cambio: cambio,
+				articulos: JSON.stringify(productos),
+				csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+			}
+				$.ajax({
+					url: "/ventas/nueva/",
+					data: venta,
+					method: "POST",
+					dataType: "json",
+					success: function(data){
+						if (data.exito) {
+							//alert("Funciona bien");
+						}	
+					},
+					error: function(error){
+						 //alert("No funciona bien");
+					}
+				})
+			$("#monto_pagar_venta").val(0);
+			$("#cambio_venta").val(0);
+			$("#tabla_body").html("");
+			$("#subtotal_venta").val(0);
+			$("#iva_venta").val(0);
+			$("#total_venta").val(0);
+			borrar_datos_productos();
+			borrar_datos_cliente();
+		}else{
+			alert("No ha agregado un monto a pagar");
+		}
+	});	
 });
 
 </script>
     {%endblock %}
 
 
-{% block contenido %}
 
+
+{% block contenido %}
+{% csrf_token %}
 <h2>Ventas</h2>
-<div>
-  <form>
-  	<div class="form-group row">
-  		<label class="col-md-1 col-form-label">Cliente</label>
-	    <div class="col-md-5">
-	      <input type="text" name="" class="form-control" placeholder="Nombre del Cliente" id="busca_cliente">
-	    </div>
-	    <div class="form-group col-md-1">
-	    	<button id="boton_cliente" class="btn btn-danger btn-sm" type="button">
-	    		<span class="glyphicon glyphicon-minus"></span>
-	    	</button> 
-	    </div>
-    </div>
-  </form>
+<div class="row">
+	<div class="col-md-12">
+		<form>
+		  	<div class="form-group row">
+		  		<label class="col-md-1 col-form-label">Cliente</label>
+			    <div class="col-md-5">
+			    	<input type="text" name="" class="form-control" placeholder="Nombre del Cliente" id="busca_cliente">
+			    </div>
+			    <div class="form-group col-md-1">
+			    	<button id="boton_cliente" class="btn btn-danger btn-sm" type="button">
+			    		<span class="glyphicon glyphicon-minus"></span>
+			    	</button> 
+			    </div>
+		    </div>
+		</form>
+	</div>
 </div>
 
 <div>
   <table class="table table-hover">
+
     <th>#</th>
     <th>Nombre</th>
     <th>RFC</th>
     <th>Direccion</th>
     <th>Telefono</th>
 
-    <tr>
+    <tr id="datos_cliente">
       <td id="cliente_id"></td>
       <td id="cliente_nombre"></td>
       <td id="cliente_RFC"></td>
@@ -101,50 +413,62 @@ $(function(){
     
   </table>
 </div>
-<div>
-  <form>
-  	<div class="form-row">
-	    <div class="form-group col-md-2">
-	     	<label for="input">Codigo de barras</label>
-	      	<input type="text" name="" id="agregar_codigo_de_barras" class="form-control" placeholder="">
-	    </div>
-	    <div class="form-group col-md-2">
-	    	<label for="input">Descripcion</label>
-	      	<input type="text" name="" id="agregar_descripcion" class="form-control" placeholder="">
-	    </div>
-	    <div class="form-group col-md-1">
-	    	<label for="input">Existencia</label>
-	      	<input type="text" name="" id="agregar_existencia" class="form-control" placeholder="">
-	    </div>
-	    <div class="form-group col-md-1">
-	    	<label for="input">Precio</label>
-	      	<input type="text" name="" id="agregar_precio" class="form-control" placeholder="">
-	    </div>
-	    <div class="form-group col-md-1">
-	    	<label for="input">Cantidad</label>
-	      	<input type="text" name="" class="form-control" placeholder="">
-	    </div>
-	    <div class="form-group col-md-1">
-	    	<label for="input">Descuento</label>
-	      	<input type="text" name="" class="form-control" placeholder="">
-	    </div>
-	    <div class="form-group col-md-1">
-	    	<label for="input">Importe</label>
-	      	<input type="text" name="" class="form-control" placeholder="">
-	    </div>
-	    <div class="form-group col-md-3">
-	    	<button id="boton_eliminar_producto" class="btn btn-danger btn-sm" type="button">
-	    		<span class="glyphicon glyphicon-minus"></span>
-	    	</button> 
-	    	<button id="boton_agregar_producto" class="btn btn-success btn-sm">
-	    		<span class="glyphicon glyphicon-plus"></span>
-	    	</button>
-	    	<!--<a href="#" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-minus"></span></a>
-			<a href="#" id="boton_agregar_producto"  class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus"></span></a>-->
-		</div>	
+<div class="row">
+	<div class="col-md-12">
+		<form>
+		  	<div class="form-row">
+			    <div class="form-group col-md-2">
+			     	<label for="input">Codigo de barras</label>
+			      	<input type="text" name="" id="agregar_codigo_de_barras" class="form-control"
+			      	placeholder="" value="">
+			      	<input type="hidden" name="" id="agregar_pk" placeholder="" value="">
+			    </div>
+			    <div class="form-group col-md-2">
+			    	<label for="input">Descripcion</label>
+			      	<input type="text" name="" id="agregar_descripcion" class="form-control" placeholder="" value="">
+			    </div>
+			    <div class="form-group col-md-1">
+			    	<label for="input">Existencia</label>
+			      	<input type="text" name="" id="agregar_existencia" class="form-control" placeholder="" value="0" readonly="">
+			    </div>
+			    <div class="form-group col-md-1">
+			    	<label for="input">Precio</label>
+			      	<input type="text" name="" id="agregar_precio" class="form-control" placeholder="" value="0">
+			    </div>
+			    <div class="form-group col-md-1">
+			    	<label for="input">Cantidad</label>
+			      	<input type="text" name="" id="agregar_cantidad" class="form-control" placeholder="" value="1">
+			    </div>
+			    <div class="form-group col-md-1">
+			    	<label for="input">Descuento</label>
+			      	<input type="text" name="" id="agregar_descuento" class="form-control" placeholder="" value="0">
+			    </div>
+			    <div class="form-group col-md-1">
+			    	<label for="input">IVA</label>
+			      	<input type="text" name="" id="agregar_iva" class="form-control" placeholder="" value="0" readonly="">
+			    </div>
+			    <div class="form-group col-md-1">
+			    	<label for="input">Importe</label>
+			      	<input type="text" name="" id="agregar_importe" class="form-control" placeholder="" value="0" readonly="">
+			    </div>
+			    <div class="form-group col-md-2">
+			    	<button id="boton_eliminar_producto" class="btn btn-danger btn-sm" type="button">
+			    		<span class="glyphicon glyphicon-minus"></span>
+			    	</button> 
+			    	<button id="boton_agregar_producto" class="btn btn-success btn-sm" type="button">
+			    		<span class="glyphicon glyphicon-plus"></span>
+			    	</button>
+				</div>	
+			</div>		
+		</form>
 	</div>
-		
-  </form>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<div class="alert alert-danger" style="display: none;" id="mensaje_error">
+			//Mensaje de error
+		</div>
+	</div>
 </div>
 <div class="container">
 	<div class="col-md-9">
@@ -161,22 +485,8 @@ $(function(){
 				    <th>Importe</th>
 			    </tr>
 		    </thead>
-		    <tbody>
-			    <tr>
-			      <td>12</td>
-			      <td>643569008655</td>
-			      <td>Agua epura</td>
-			      <td>12</td>
-			      <td>1</td>
-			      <td>0</td>
-			      <td>0</td>
-			      <td>0</td>
-			      <td>
-			      	<div class="col-md-1">
-						<a href="#" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-minus"></span></a>
-					</div>
-				  </td>
-			    </tr>
+		    <tbody id="tabla_body">
+			    
 		  	</tbody>  
 	  	</table>
 	</div>
@@ -186,33 +496,89 @@ $(function(){
 			<thead>
 				<tr>
 					<th>Total</th>
+						<td id="totales_productos"></td>
 				</tr>
 			</thead>
-			<tbody>		
+			<tbody id="tbody">		
 				
 				<tr>
 					<th>SUBTOTAL</th>
-						<td>0.00</td>
+						<td id="totales_subtotal"></td>
 				</tr>
 				<tr>
 					<th>IVA</th>
-						<td>0.00</td>
+						<td id="totales_iva"></td>
 				</tr>
 				<tr>
 					<th>DESCUENTO</th>
-						<td>0.00</td>
+						<td id="totales_descuento"></td>
 				</tr>
 				<tr>
 					<th>TOTAL</th>
-						<td>0.00</td>
+						<td id="totales_total"></td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
-	<!--<div class="col-md-1">
-		<a href="#" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-minus"></span></a>
-	</div>-->
 </div>
+
+<button id="guargar_venta" type="button" data-toggle="modal" data-target="#Modal_pago_venta">Pagar venta</button>
+
+
+<!-- Modal -->
+<div id="Modal_pago_venta" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Detalle de Venta</h4>
+      </div>
+      <div class="modal-body">
+      	<form>
+      		<div class="form-group row">
+		  		<label class="col-md-7 col-form-label">SUBTOTAL</label>
+			    <div class="col-md-4">
+			    	<input type="text" name="" class="form-control" placeholder="" id="subtotal_venta" value="0" readonly="">
+			    </div>	
+			    <label class="col-md-7 col-form-label">IVA</label>
+			    <div class="col-md-4">
+			    	<input type="text" name="" class="form-control" placeholder="" id="iva_venta" value="0" readonly="">
+			    </div>	
+			     <label class="col-md-7 col-form-label">TOTAL</label>
+			    <div class="col-md-4">
+			    	<input type="text" name="" class="form-control" placeholder="" id="total_venta" value="0" readonly="">
+			    </div>	
+				<label class="col-md-7 col-form-label">METODO DE PAGO</label>
+				<div class="col-md-4"> 
+				    <select name="select" id="metodo_pago_venta" class="form-control">
+						<option value="01" selected>EFECTIVO</option> 
+					  	<option value="02">TRANSFERENCIA</option>
+					  	<option value="03">TARJETA</option>
+					</select>
+				</div>
+			    <label class="col-md-7 col-form-label">MONTO PAGADO</label>
+			    <div class="col-md-4">
+			    	<input type="text" name="" class="form-control" placeholder="" id="monto_pagar_venta" value="0">
+			    </div>	
+			    <label class="col-md-7 col-form-label">CAMBIO</label>
+			    <div class="col-md-4">
+			    	<input type="text" name="" class="form-control" placeholder="" id="cambio_venta" value="0">
+			    </div>	
+			   
+			</div>
+      	</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="pagar_cerrar" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" id="pagar_realizar_pago" class="btn btn-default" data-dismiss="modal">Realizar pago</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 {% endblock %}
 
 {% block titulo %}
