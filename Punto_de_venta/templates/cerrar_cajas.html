@@ -1,0 +1,16 @@
+{% extends "base_tpv.html" %}
+{% load static %}
+{% block contenido %}
+	
+	<h2>Administracion de cajas "Cerrar" </h2> 
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ caja.as_p }}
+    
+        <button type="submit" class="save btn btn-default">Guardar</button>
+    </form>
+{% endblock %}
+
+
+{% block titulo %}
+Clientes
+{% endblock %}

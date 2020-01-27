@@ -108,18 +108,24 @@ class DetalleVenta(models.Model):
 	precio = models.DecimalField(max_digits=10, decimal_places=2)
 	iva = models.DecimalField(max_digits=10, decimal_places=2)
 	descuento = models.DecimalField(max_digits=10, decimal_places=2)
+	importe = models.DecimalField(max_digits=10,decimal_places=2)
 	ventas = models.ForeignKey(Ventas, on_delete=models.CASCADE)
 
 	def __str__(self):
         	return self.cantidad
 
 class CajaOperacion(models.Model):
-	fecha_apertura = models.DateTimeField(default=timezone.now)
+	fecha_apertura = models.DateTimeField(blank=True, null=True)
 	fecha_cierre = models.DateTimeField(default=timezone.now)
-	saldo_inicial = models.DecimalField(max_digits=10, decimal_places=2)
-	saldo_final = models.DecimalField(max_digits=10, decimal_places=2)
+	saldo_inicial = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+	saldo_final = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
 	empleado = models.ForeignKey('auth.User', on_delete=models.CASCADE)
 	cajas = models.ForeignKey(Caja, on_delete=models.CASCADE)
+	status = models.CharField(max_length=1, default=0)
+
+	"""def publish(self):
+        self.fecha_apertura = timezone.now()
+        self.save()"""
 
 	def __str__(self):
-        	return self.empleado
+        	return self.fecha_apertura

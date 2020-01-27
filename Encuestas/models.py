@@ -11,7 +11,7 @@ from django.utils import timezone
 
 class Pregunta(models.Model):
 	texto_pregunta = models.CharField(max_length=200)
-	pub_date = models.DateTimeField('date_published')
+	pub_date 		 = models.DateTimeField('date_published')
 
 	def __str__(self):
 		return self.texto_pregunta

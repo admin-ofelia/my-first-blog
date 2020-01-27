@@ -11,6 +11,6 @@
 			<td>{{i.cliente}}</td>	
 			<td>{{i.caja}}</td>	
 			<td>{{i.empleado}}</td>	
-				
+			<td><a href="{% url 'reporte_pdf_venta' pk=i.id %}">Reporte pdf</td>	
 		</tr>
 		{%endfor %}	

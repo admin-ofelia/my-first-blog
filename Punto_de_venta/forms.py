@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Ubicacion, Contacto, Provedores, Caja, UnidadMedida, Departamento, Marca, Productos, Clientes, Ventas, DetalleVenta, CajaOperacion
+from .models import Ubicacion, Contacto, Provedores, Caja, CajaOperacion, UnidadMedida, Departamento, Marca, Productos, Clientes, Ventas, DetalleVenta
 
 class ProductoNuevo(forms. ModelForm):
 	class Meta:
@@ -53,5 +53,15 @@ class VentaNueva(forms. ModelForm):
 
 class CajaNueva(forms. ModelForm):
 	class Meta:
-		models = Caja
-		fields = ('nombre',)
+		model = Caja
+		fields = ('nombre',) 
+
+class CajaAbrir(forms.ModelForm):    
+	class Meta:
+		model = CajaOperacion
+		fields = ('saldo_inicial',)  
+
+class CajaCerrar(forms.ModelForm):    
+	class Meta:
+		model = CajaOperacion
+		fields = ('saldo_final',) 

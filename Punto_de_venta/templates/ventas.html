@@ -5,6 +5,7 @@
 {% block js_footer %}
 <script type="text/javascript">
 
+
 function eliminaclaseerror(){
 	$("#agregar_codigo_de_barras").parent().removeClass("has-error");
 	$("#agregar_descripcion").parent().removeClass("has-error");
@@ -103,7 +104,8 @@ function lista_productos(){
 		 	cantidad : $(columnas[4]).text(), 
 		 	descuento : $(columnas[5]).text(), 
 		 	iva : $(columnas[6]).text(), 
-		 	importe : $(columnas[7]).text()
+		 	importe : $(columnas[7]).text(),
+		 	importe_factura : $(columnas[8]).text(),
 		};
 	lista.push(dato);
 	})
@@ -183,7 +185,8 @@ function agregarproducto(){
 		'<td id="descuento_producto" class="tddescuento">' + total_descuento + '</td>'+
 		'<td id="iva_producto" class="tdiva">' + total_iva + '</td>'+
 		'<td id="importe_producto" class="tdimporte">' + total_importe + '</td>'+
-		
+		'<td id="importe_factura" class="tdfactura">' + total + '</td>'+
+
 		'<td>'+
 			'<div class="col-md-1">'+
 				'<button id="boton_producto" class="btn btn-danger btn-sm" type="button">'+
@@ -255,7 +258,7 @@ $(function(){
 			$("#agregar_existencia").val(campos.existencia);
 			$("#agregar_precio").val(campos.precio);
 			$("#agregar_pk").val(campos.pk);
-			$("#agregar_iva").val(campos.iva)
+			$("#agregar_iva").val(campos.iva);
 
 			calculaimporte();
 
@@ -277,6 +280,7 @@ $(function(){
 		if($("#agregar_pk").val() != ""){		
 			if($("#agregar_codigo_de_barras").val() != "" && $("#agregar_descripcion").val() != "" && $("#agregar_cantidad").val() > 0 && $("#agregar_precio").val() > 0){
 				agregarproducto();	
+				$(".tdfactura").hide();
 			}else{
 				validaproducto();
 			}	

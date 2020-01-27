@@ -3,10 +3,36 @@
 {% load static %}
 
 {% block contenido %}
-	
+
+	<table class="table ">
+		<th>Nombre</th>
+		<th>Estado</th>
+		<th>Acciones</th>
 	{% for i in objeto %}
-		{{i.nombre}}
+		<tr>
+			<td>{{i.nombre}}</td>
+			<td>
+				<!--{{request.session.caja}}
+				{{i.id}}-->
+				{% if request.session.caja == i.id %}  
+					Activo	
+				{% else %}
+					Inactivo
+				{% endif %}
+			</td>
+			<td>
+				{% if request.session.caja == i.id %}  
+					<a href="{% url 'cerrar_caja' %}" class="btn btn-primary btn-sm">cerrar</a>	
+				{% else %}
+					<a href="{% url 'caja_sesion' pk=i.id %}" class="btn btn-info btn-sm">Abrir caja</a>
+				{% endif %}			 
+			</td>
+
+			
+		</tr>
 	{%endfor %}
+	</table>
+	<tabñle
 
 {% endblock%}
 

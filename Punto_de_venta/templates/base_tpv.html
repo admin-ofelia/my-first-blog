@@ -4,10 +4,12 @@
 <head>
 	<meta  charset="UTF-8">
 	<title>{% block titulo %}{% endblock %}</title>
+	<!--<link rel="stylesheet" href="{% static 'plugins/bootstrap/bootstrap.min.css' %}" >-->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
     <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="{% static 'css/ptoventa.css' %}">
     {% block css %}
+
     {%endblock %}
 </head>
 <body>
@@ -37,7 +39,7 @@
 			          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Participantes<span class="caret"></span></a>
 			          <ul class="dropdown-menu">
 			            <li><a href="{% url 'lista_caja' %}">Cajas</a></li>
-			            <li><a href="{% url 'prov_nuevo' %}">Provedores</a></li>
+			            <li><a href="{% url 'prov_nuevo' %}">Proveedores</a></li>
 			            <li><a href="{% url 'cliente_consultar' %}">Clientes</a></li>
 			            <!--<li role="separator" class="divider"></li>
 			            <li><a href="#"></a></li>
@@ -55,13 +57,12 @@
 			      <ul class="nav navbar-nav navbar-right">
 			        <li><a href="{% url 'ventas_lista' %}">Ventas</a></li>
 			        <li class="dropdown">
-			          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sesion <span class="caret"></span></a>
+			          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ request.user.username }}	<span class="caret"></span></a>
 			          <ul class="dropdown-menu">
-			            <li><a href="#">Action</a></li>
-			            <li><a href="#">Another action</a></li>
-			            <li><a href="#">Something else here</a></li>
+			            <li><a href="{% url 'logout' %}">Cerrar sesion</a></li>
+			            <li><a href="#"></a></li>
 			            <li role="separator" class="divider"></li>
-			            <li><a href="#">Separated link</a></li>
+			            <li><a href="#"></a></li>
 			          </ul>
 			        </li>
 			      </ul>
@@ -74,20 +75,15 @@
 
 		{% endblock %}
 	</div>
-	<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+	
+	<script src="{% static 'plugins/jquery/jquery-1.12.4.min.js' %}"></script>
+
+	<script src="{% static 'plugins/bootstrap/bootstrap.min.js' %}"></script>
 
 	<!-- jQuery UI
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 -->
-	<script
-			  src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
-			  integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
-			  crossorigin="anonymous">
-			 
-			 
-	</script>
-
+	<script src="{% static 'plugins/jqueryui/jquery-ui.js' %}"></script>
 	{% block js_footer %}
     {%endblock %}
 

@@ -1,15 +1,40 @@
 {% extends "base_tpv.html" %}
 {% load static %}
 
+
+{% block css %}
+	<link rel="stylesheet" type="text/css" href="{%static 'plugins/datepicker/css/datepicker.css' %}" >
+
+{%endblock %}
 {% block js_footer %}
+<script src="{% static 'plugins/datepicker/js/bootstrap-datepicker.js' %}"></script>
+<script src="{% static 'plugins/datepicker/js/locales/bootstrap-datepicker.es.js' %}"></script>
 <script type="text/javascript">
 
+
 $(function(){
+	
+	//$.datepicker.setDefaults($.datepicker.regional["es"]);
+	$('.fecha_inicial').datepicker({
+        locale: 'es',
+        languaje: 'es', 
+        format: 'yyyy-mm-dd'
+    });
+    $('.fecha_final').datepicker({
+        locale: 'es',
+        languaje: 'es-es', 
+        format: 'yyyy-mm-dd'
+    });
+    
+
 	$("#buscar_venta").click(function(){
+		caja_nombre = $("#reporte_caja").val();
+		console.log(typeof(caja_nombre));
 		fecha = {
 			fecha_inicio: $("#fecha_ini_venta").val(),
 			fecha_fin: $("#fecha_fin_venta").val(),
-			cliente: $("#cliente_venta").val(),
+			cliente: $("#cliente_pk").val(),
+			caja: caja_nombre,
 			csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
 		}
 		$.ajax({
@@ -26,7 +51,42 @@ $(function(){
 				alert("No funciona bien"); 
 			}
 		})
+	});
+
+	$("#cliente_venta").autocomplete({
+		source: "/reporte/",
+		monLenght: 2,
+		select: function(event,ui){
+			clientes = ui.item;
+			dato = $("#cliente_venta").val(clientes.nombre);
+			cliente_id = $("#cliente_pk").val(clientes.pk);
+		return false;
+		}
+	}).autocomplete('instance')._renderItem=function(ul,item){
+		return $("<a class = 'list-group-item list-group-item-action'></a>")
+		.append("<div class=''>" + item.nombre + "</div>")
+		.appendTo(ul);
+	}
+
+	$("#exportar_excel").click(function(){
+		fecha_inicial = $("#fecha_ini_venta").val();
+		fecha_final = $("#fecha_fin_venta").val();
+		nombre_cliente = $("#cliente_pk").val();
+		nombre_caja = $("#reporte_caja").val();
+		console.log(fecha_inicial);
+		url="/reporte/exportar?fechaini=" + fecha_inicial+ "&fechafin=" + fecha_final+ "&cliente=" + nombre_cliente + "&caja=" +nombre_caja;
+		window.open(url, '_blank');
+		
 	})
+	$("#exportar_pdf").click(function(){
+		fecha_inicial = $("#fecha_ini_venta").val();
+		fecha_final = $("#fecha_fin_venta").val();
+		nombre_cliente = $("#cliente_pk").val();
+		nombre_caja = $("#reporte_caja").val();
+		url="/reporte/pdf?fechaini=" + fecha_inicial+ "&fechafin=" + fecha_final+ "&cliente=" + nombre_cliente + "&caja=" +nombre_caja;
+		window.open(url, '_blank');
+	})	
+	
 });
 </script>
 {% endblock %}
@@ -34,27 +94,91 @@ $(function(){
 {% block contenido %}
 {% csrf_token %}
 
+
+<h2>Reporte de Ventas</h2>
+<div class="form-group row">      
+        <!--<div class="col-md-4 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label>Propiedad</label>
+                <input type="text" placeholder="Descripcion" class="form-control" id="filtro_propiedad">  
+            </div>
+        </div>-->
+       	<div class="col-md-4 col-sm-8">
+            <label>Fecha</label>
+            <div readonly="readonly" style="cursor: not-allowed;" data-date-format="dd/mm/yyyy" class="input-group date-picker input-daterange">
+                <input type="text" placeholder="" class="form-control fecha_inicial rango_fecha" id="fecha_ini_venta">
+                <span class="input-group-addon">
+                    a
+                </span>
+                <input type="text" placeholder="" class="form-control fecha_final rango_fecha" id="fecha_fin_venta">
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-6 col-xs-6">   
+            <div class="form-group">
+                <label>Cliente</label>
+                <input type="text" class="form-control form-control-md" id="cliente_venta" placeholder="">
+                <input class="form-control form-control-md" id="cliente_pk" type="hidden" placeholder="">
+            </div>
+        </div>    
+        <div class="col-md-2 col-sm-8 ">
+            <div class="form-group">
+                <label>Caja</label>
+                <select name="select" id="reporte_caja" class="form-control">
+                    <option value="">------</option>
+                    {% for caja in cajas %}
+                    <option value="{{caja.id}}">{{caja.nombre}}</option>
+                    {%endfor%}                  
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-6 col-xs-6">  
+            <button id="buscar_venta" class="btn btn-secondary" type="button">BUSCAR</button>   
+        </div> 
+        <div class="col-md-6 col-sm-6 col-xs-6">   
+            <button type="button" id="exportar_excel">Reporte Excel</button>
+            <button type="button" id="exportar_pdf">Reporte pdf</button>      
+        </div> 
+    </div>
+<!--
 	<h2>Reporte de Ventas</h2>
 	<form>
-		  <div class="form-group row">
-		    <label for="" class="col-sm-1 col-form-label col-form-label-sm">Fecha</label>
-		    <div class="col-sm-2">
-		      <input type="text" class="form-control form-control-sm" id="fecha_ini_venta" placeholder="">
+		<div class="form-group row">
+		    <label for="" class="col-md-1 col-form-label col-form-label-md">Fecha</label>
+		    <div class="col-md-2">
+		      	<input type="text" class="fecha_inicial" id="fecha_ini_venta" placeholder="">
 		    </div>
-		    <div class="col-sm-2">
-		      <input type="text" class="form-control form-control-sm" id="fecha_fin_venta" placeholder="">
+		    <div class="col-md-2">
+		    	<input type="text" class="fecha_final" id="fecha_fin_venta" placeholder="">	
 		    </div>
-		    <label for="colFormLabelSm" class="col-sm-1 col-form-label col-form-label-sm">cliente</label>
-		    <div class="col-sm-2">
-		      <input type="text" class="form-control form-control-sm" id="cliente_venta" placeholder="">
+		   	<label for="" class="col-md-1 col-form-label col-form-label-md">Cliente</label>
+		    <div class="col-md-2">
+		      <input type="text" class="form-control form-control-md" id="cliente_venta" placeholder="">
+		      <input class="form-control form-control-md" id="cliente_pk" type="hidden" placeholder="">
 		    </div>
-		    <button id="buscar_venta" class="btn btn-default" type="button">BUSCAR</button>
-		  </div>
-	</form>
+		    
+		    <label for="" class="col-sm-1 col-form-label col-form-label-md">Caja</label>
+		    <div class="col-md-2">
+		      	<select name="select" id="reporte_caja" class="form-control">
+		      		<option value="">------</option>
+		      		{% for caja in cajas %}
+		      		<option value="{{caja.id}}">{{caja.nombre}}</option>
+		      		{%endfor%}		      		
+		      	</select>
+		    </div>
+		    <div class="col-md-1">
+			    <button id="buscar_venta" class="btn btn-secondary" type="button">BUSCAR</button>    
+			</div>
+			<div class="col-md-6">
+				<button type="button" id="exportar_excel">Reporte Excel</button>
+				<button type="button" id="exportar_pdf">Reporte pdf</button>
+				
+			</div>
+		</div>
+	</form>  -->
 
 	<table class="table table-hover table-striped table-bordered">
 		<th>Id</th>
-		<th>Forma de pago</th>
+		<th>FPAGO</th>
 		<th>Monto pagado</th>
 		<th>Total</th>
 		<th>Fecha</th>

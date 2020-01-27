@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.template import Template
 from django.template import loader
 from django.http import Http404
+from django.views import generic
 
 from .models import Pregunta, Opcion
 
